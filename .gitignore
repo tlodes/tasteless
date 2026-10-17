@@ -1,0 +1,12 @@
+.nuxt
+.output
+node_modules
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+
+# Local hosting metadata and generated output
+.openai
+dist
