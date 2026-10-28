@@ -50,13 +50,42 @@ onMounted(() => {
   controls.rotateSpeed = 0.68
   controls.minPolarAngle = Math.PI * 0.2
   controls.maxPolarAngle = Math.PI * 0.48
-  controls.target.set(0, -0.15, 0)
+  controls.target.set(0, 0, 0)
   controls.addEventListener('start', () => { isDragging.value = true })
   controls.addEventListener('end', () => { isDragging.value = false })
 
   const controllerRig = new THREE.Group()
   controllerRig.rotation.y = -0.16
   scene.add(controllerRig)
+
+  const defaultCameraDistance = camera.position.length()
+  const modelCorners: THREE.Vector3[] = []
+  const viewDirection = new THREE.Vector3()
+  const viewRight = new THREE.Vector3()
+  const viewUp = new THREE.Vector3()
+  const cornerOffset = new THREE.Vector3()
+
+  const fitCamera = () => {
+    if (!modelCorners.length) return
+    viewDirection.copy(camera.position).sub(controls.target).normalize()
+    viewRight.crossVectors(camera.up, viewDirection).normalize()
+    viewUp.crossVectors(viewDirection, viewRight).normalize()
+
+    // Fit the model's actual bounds in both dimensions, leaving room at the edges.
+    const verticalSlope = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * 0.86
+    const horizontalSlope = verticalSlope * camera.aspect
+    let distance = defaultCameraDistance
+    for (const corner of modelCorners) {
+      cornerOffset.copy(corner).sub(controls.target)
+      const depth = cornerOffset.dot(viewDirection)
+      distance = Math.max(
+        distance,
+        depth + Math.abs(cornerOffset.dot(viewRight)) / horizontalSlope,
+        depth + Math.abs(cornerOffset.dot(viewUp)) / verticalSlope
+      )
+    }
+    camera.position.copy(controls.target).addScaledVector(viewDirection, distance)
+  }
 
   const raycaster = new THREE.Raycaster()
   const pointer = new THREE.Vector2()
@@ -126,8 +155,8 @@ onMounted(() => {
       const size = bounds.getSize(new THREE.Vector3())
       const center = bounds.getCenter(new THREE.Vector3())
       const scale = 6.6 / Math.max(size.x, size.y, size.z)
-      controller.position.sub(center)
       controller.scale.setScalar(scale)
+      controller.position.copy(center).multiplyScalar(-scale)
       controller.traverse((child) => {
         if (!(child instanceof THREE.Mesh)) return
         child.castShadow = true
@@ -135,6 +164,15 @@ onMounted(() => {
       })
       controllerRig.add(controller)
       registerInteractiveParts(controller)
+      const fittedBounds = new THREE.Box3().setFromObject(controllerRig).expandByScalar(0.08)
+      for (const x of [fittedBounds.min.x, fittedBounds.max.x]) {
+        for (const y of [fittedBounds.min.y, fittedBounds.max.y]) {
+          for (const z of [fittedBounds.min.z, fittedBounds.max.z]) {
+            modelCorners.push(new THREE.Vector3(x, y, z))
+          }
+        }
+      }
+      fitCamera()
       isLoading.value = false
     },
     (event) => {
@@ -258,20 +296,12 @@ onMounted(() => {
     const parent = element.parentElement
     if (!parent) return
     const { width, height } = parent.getBoundingClientRect()
+    if (!width || !height) return
     renderer.setSize(width, height, false)
     camera.aspect = width / height
-    if (width < 640) {
-      camera.position.set(5.7, 4.35, 10.7)
-      controls.target.set(0, 0.35, 0)
-    } else if (width < 1024) {
-      camera.position.set(5.8, 3.8, 9.4)
-      controls.target.set(0, 0, 0)
-    } else {
-      camera.position.set(5.4, 3.45, 8.2)
-      controls.target.set(0, -0.15, 0)
-    }
     camera.updateProjectionMatrix()
     controls.update()
+    fitCamera()
   }
 
   const observer = new ResizeObserver(resize)
@@ -303,6 +333,7 @@ onMounted(() => {
     }
 
     controls.update()
+    fitCamera()
     renderer.render(scene, camera)
     animationFrame = requestAnimationFrame(animate)
   }
