@@ -26,13 +26,14 @@ const seekBy = (seconds: number) => {
 
 <template>
   <div class="site-shell">
+    <ParticleBackground />
     <svg class="logo-filter" aria-hidden="true">
-      <filter id="red-only" color-interpolation-filters="sRGB" x="-5%" y="-5%" width="110%" height="110%">
+      <filter id="beige-only" color-interpolation-filters="sRGB" x="-5%" y="-5%" width="110%" height="110%">
         <feColorMatrix
           type="matrix"
-          values="0 0 0 0 1
-                  0 0 0 0 .19
-                  0 0 0 0 .31
+          values="0 0 0 0 .914
+                  0 0 0 0 .886
+                  0 0 0 0 .788
                   0 0 0 1 0"
         />
       </filter>

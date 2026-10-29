@@ -7,6 +7,8 @@
   --red: #ff3150;
   --red-soft: rgba(255, 49, 80, 0.28);
   --line: rgba(255, 49, 80, 0.24);
+  --ink: #321321;
+  --divider: rgba(50, 19, 33, 0.24);
   --page-gutter: clamp(1.25rem, 3.33vw, 4rem);
   font-family: Inter, Arial, sans-serif;
   font-synthesis: none;
@@ -28,18 +30,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-vis
 .pill-button { display: inline-flex; justify-content: center; align-items: center; min-height: 44px; padding: 1rem 1.7rem; border: 0; border-radius: 999px; color: var(--cream); background: var(--red); font-size: 1rem; font-weight: 700; text-decoration: none; transition: transform 200ms ease; }
 a.pill-button:hover, button.pill-button:enabled:hover { transform: translateY(-3px); }
 
-.site-shell { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; background: radial-gradient(circle at 50% 20rem, rgba(255, 255, 255, 0.38), transparent 40rem), var(--cream); }
+.site-shell { position: relative; min-height: 100svh; overflow: hidden; isolation: isolate; }
 .site-shell::after { position: fixed; z-index: 20; inset: 0; pointer-events: none; content: ''; opacity: 0.026; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.9'/%3E%3C/svg%3E"); }
 .logo-filter { position: absolute; width: 0; height: 0; overflow: hidden; pointer-events: none; }
-.hero { position: relative; display: flex; min-height: max(46rem, 100svh); flex-direction: column; }
-.site-header { position: relative; z-index: 5; padding-inline: var(--page-gutter); border-bottom: 1px solid #fff; }
+.hero { position: relative; display: flex; min-height: max(46rem, 100svh); flex-direction: column; isolation: isolate; }
+.site-header { position: relative; z-index: 5; padding-inline: var(--page-gutter); color: var(--ink); }
 .site-nav { position: relative; display: grid; min-height: 7.2rem; grid-template-columns: 1fr auto 1fr; align-items: center; }
 .nav-meta { justify-self: start; }
+.hero .nav-meta, .hero .hero-bottom { color: #541b2e; }
 .nav-links { display: flex; grid-column: 3; justify-self: end; align-items: center; gap: clamp(1rem, 2.5vw, 2.5rem); }
 .nav-link { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; }
 .nav-ticket { font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.9rem 1.4rem; }
 .nav-logo { position: absolute; z-index: 2; top: 50%; left: 50%; display: block; width: clamp(7.4rem, 10vw, 9rem); transform: translate(-50%, -50%); }
-.nav-logo img { display: block; width: 100%; height: auto; filter: url('#red-only'); }
+.nav-logo img { display: block; width: 100%; height: auto; filter: url('#beige-only') drop-shadow(0 1px 1px rgba(50, 19, 33, 0.35)); }
 .hero-stage { position: relative; flex: 1; min-height: 33rem; width: 100%; max-width: 100rem; margin-inline: auto; scroll-margin-top: 1rem; }
 .scene-wrap, .scene-canvas, .scene-fallback { position: absolute; inset: 0; width: 100%; height: 100%; }
 .scene-wrap { z-index: 1; }
@@ -63,26 +66,26 @@ a.pill-button:hover, button.pill-button:enabled:hover { transform: translateY(-3
 .loading-fade-leave-active { transition: opacity 400ms ease; }
 .loading-fade-leave-to { opacity: 0; }
 
-.marquee { overflow: hidden; background: var(--red); color: var(--cream); }
+.marquee { overflow: hidden; color: var(--ink); }
 .marquee-track { display: flex; width: max-content; animation: marquee-scroll 32s linear infinite; }
 .marquee-group { display: flex; flex-shrink: 0; align-items: center; gap: 3rem; padding: 1.25rem 3rem 1.25rem 0; font-size: clamp(1.5rem, 2.4vw, 2.25rem); font-weight: 800; letter-spacing: -0.04em; text-transform: uppercase; white-space: nowrap; }
 .marquee-dot { opacity: 0.6; font-size: 0.65em; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 @keyframes marquee-scroll { to { transform: translateX(-50%); } }
 .statement { padding: clamp(4.5rem, 8.3vw, 8rem) var(--page-gutter); }
-.statement-inner { display: flex; max-width: 84rem; margin-inline: auto; justify-content: space-between; align-items: flex-end; gap: 2.5rem; flex-wrap: wrap; }
+.statement-inner { display: flex; max-width: 92rem; margin-inline: auto; padding: clamp(1.5rem, 4vw, 4rem); color: var(--ink); justify-content: space-between; align-items: flex-end; gap: 2.5rem; flex-wrap: wrap; }
 .statement h2 { margin: 0; font-size: clamp(3rem, 8vw, 8rem); line-height: 0.92; font-weight: 800; letter-spacing: -0.075em; text-transform: uppercase; }
 .statement h2 span { display: inline-block; transition: color 180ms ease, background 180ms ease; }
 .statement h2 span:hover { color: var(--cream); background: var(--red); }
 .statement .pill-button { flex-shrink: 0; }
-.site-footer { padding: 3rem var(--page-gutter) 2.5rem; color: var(--cream); background: var(--red); }
+.site-footer { width: calc(100% - var(--page-gutter) * 2); max-width: 92rem; margin: 0 auto 2rem; padding: 3rem var(--page-gutter) 2.5rem; color: var(--ink); }
 .footer-inner { display: flex; max-width: 84rem; margin-inline: auto; align-items: center; justify-content: space-between; gap: 2.5rem; flex-wrap: wrap; }
 .newsletter { max-width: 100%; }
 .newsletter-controls { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-.newsletter input { min-width: 0; width: 18rem; max-width: 100%; padding: 0.95rem 1.4rem; border: 1px solid var(--cream); border-radius: 999px; color: var(--cream); background: rgba(255, 255, 255, 0.12); opacity: 1; }
-.newsletter input::placeholder { color: var(--cream); opacity: 0.8; }
-.newsletter .pill-button { color: var(--red); background: var(--cream); }
-.footer-note { margin: 0.75rem 0 0; font-family: 'DM Mono', monospace; font-size: 0.6rem; }
+.newsletter input { min-width: 0; width: 18rem; max-width: 100%; padding: 0.95rem 1.4rem; border: 1px solid var(--divider); border-radius: 999px; color: var(--ink); background: transparent; opacity: 1; }
+.newsletter input::placeholder { color: var(--ink); opacity: 0.8; }
+.newsletter .pill-button { color: var(--cream); background: var(--red); }
+.footer-note { margin: 0.75rem 0 0; font-family: 'DM Mono', monospace; font-size: 0.65rem; }
 .footer-links { display: flex; align-items: center; gap: 2rem; }
 .footer-placeholder small { font-size: 0.55rem; letter-spacing: 0; opacity: 0.7; }
 
